@@ -7,7 +7,6 @@ import * as THREE from 'three';
 declare var require: any;
 import OrbitControls from 'three-orbitcontrols';
 import GLTFLoader from 'three-gltf-loader';
-//const OrbitControls = require('three-orbitcontrols');
 
 @Component({
   selector: 'app-root',
@@ -25,25 +24,22 @@ export class AppComponent {
   light;
 
   constructor() {
-    debugger;
     this.scene = new THREE.Scene();
     this.light = new THREE.HemisphereLight(0xbbbbff, 0x444422);
     this.light.position.set(0, 1, 0);
     this.scene.add(this.light);
-
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.gammaOutput = true;
-
-
+    this.animate();
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 80000);
     this.camera.position.set(-1000, 9000, 42000);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.target.set(0, 0, 20000);
     this.controls.update();
     const loader = new GLTFLoader();
-    loader.load('../assets/models/A320/scene.gltf', (gltf) => {debugger;
+    loader.load('../assets/models/A320/scene.gltf', (gltf) => {
       this.scene.add(gltf.scene);
     }, undefined, function (e) {
       console.error(e);
@@ -54,9 +50,11 @@ export class AppComponent {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     });
   }
-  ngOnInit() {
-    debugger;
+  animate() {
+    window.requestAnimationFrame(() => this.animate());
     this.renderer.render(this.scene, this.camera);
+  }
+  ngOnInit() {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
   }
@@ -65,40 +63,4 @@ export class AppComponent {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
-
-  // @ViewChild('rendererContainer') rendererContainer: ElementRef;
-
-  // renderer = new THREE.WebGLRenderer();
-  // scene = null;
-  // camera = null;
-  // mesh = null;
-
-  // constructor() {
-  //   this.scene = new THREE.Scene();
-
-  //   this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-  //   this.camera.position.z = 1000;
-
-  //   const geometry = new THREE.BoxGeometry(200, 200, 200);
-  //   const material = new THREE.MeshBasicMaterial({
-  //     color: 0xff0000,
-  //     wireframe: true
-  //   });
-  //   this.mesh = new THREE.Mesh(geometry, material);
-
-  //   this.scene.add(this.mesh);
-  // }
-
-  // ngAfterViewInit() {
-  //   this.renderer.setSize(window.innerWidth, window.innerHeight);
-  //   this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
-  //   this.animate();
-  // }
-
-  // animate() {
-  //   window.requestAnimationFrame(() => this.animate());
-  //   this.mesh.rotation.x += 0.01;
-  //   this.mesh.rotation.y += 0.02;
-  //   this.renderer.render(this.scene, this.camera);
-  // }
 }
