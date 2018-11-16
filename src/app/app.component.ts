@@ -75,8 +75,9 @@ modelLoaded;
       // calculate objects intersecting the picking ray
       const intersects = this.raycaster.intersectObjects(this.scene.children, true);
       console.log('Intersects:::' + intersects.length);
-      debugger;
+
       if (intersects.length !== 0) {
+        debugger;
         const numberTexture = new THREE.CanvasTexture(
           document.querySelector('#number')
         );
@@ -92,7 +93,7 @@ modelLoaded;
           })
         );
         const vector = new THREE.Vector3( this.mouse.x, this.mouse.y, -1 ).unproject( this.camera );
-        mesh.position.set(vector.x, vector.y, vector.z);
+        mesh.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
         this.scene.add(mesh);
         this.renderer.render(this.scene, this.camera);
       }
