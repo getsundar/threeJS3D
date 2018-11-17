@@ -25,7 +25,8 @@ export class AppComponent {
   raycaster;
   mouse;
   sprite;
-modelLoaded;
+  modelLoaded;
+  meshArray;
   constructor() {
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
@@ -42,11 +43,25 @@ modelLoaded;
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.target.set(0, 0, 20000);
     this.controls.update();
+    this.meshArray = [];
     this.animate();
     const loader = new GLTFLoader();
     loader.load('../assets/models/A320/scene.gltf', (gltf) => {
-      this.scene.add(gltf.scene);
-      this.modelLoaded=gltf.scene;
+      this.modelLoaded = gltf.scene;
+      this.modelLoaded.traverse((child) => {
+        if (child.isMesh) {
+          const wireframeGeometry = new THREE.WireframeGeometry(child.geometry);
+          const wireframeMaterial = new THREE.LineBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.2
+          });
+          const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+          child.add(wireframe);
+        }
+      });
+      this.scene.add(this.modelLoaded);
+      this.modelLoaded = gltf.scene;
     }, undefined, function (e) {
       console.error(e);
     });
@@ -60,7 +75,6 @@ modelLoaded;
   animate() {
     window.requestAnimationFrame(() => this.animate());
     this.renderer.render(this.scene, this.camera);
-    //console.log('check');
   }
   ngOnInit() {
     let count = 0;
@@ -74,10 +88,7 @@ modelLoaded;
       vec.unproject(this.camera);
       // calculate objects intersecting the picking ray
       const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-      console.log('Intersects:::' + intersects.length);
-
       if (intersects.length !== 0) {
-        debugger;
         const numberTexture = new THREE.CanvasTexture(
           document.querySelector('#number')
         );
@@ -92,15 +103,12 @@ modelLoaded;
             shading: THREE.FlatShading
           })
         );
-        const vector = new THREE.Vector3( this.mouse.x, this.mouse.y, -1 ).unproject( this.camera );
+        const vector = new THREE.Vector3(this.mouse.x, this.mouse.y, -1).unproject(this.camera);
         mesh.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
         this.scene.add(mesh);
         this.renderer.render(this.scene, this.camera);
       }
     });
-    // this.rendererContainer.nativeElement.addEventListener('click', () => {
-    //   debugger;
-    // });
   }
 
   onWindowResize() {
