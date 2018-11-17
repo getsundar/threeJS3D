@@ -31,6 +31,7 @@ export class AppComponent {
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
     this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0x383838);
     this.light = new THREE.HemisphereLight(0xbbbbff, 0x444422);
     this.light.position.set(0, 1, 0);
     this.scene.add(this.light);
@@ -80,35 +81,35 @@ export class AppComponent {
     let count = 0;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
-    window.addEventListener('click', (event) => {
-      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-      this.raycaster.setFromCamera(this.mouse, this.camera);
-      const vec = new THREE.Vector3();
-      vec.unproject(this.camera);
-      // calculate objects intersecting the picking ray
-      const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-      if (intersects.length !== 0) {
-        const numberTexture = new THREE.CanvasTexture(
-          document.querySelector('#number')
-        );
-        const cubeGeometry = new THREE.BoxGeometry(500, 500, 500);
+    // window.addEventListener('click', (event) => {
+    //   this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    //   this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    //   this.raycaster.setFromCamera(this.mouse, this.camera);
+    //   const vec = new THREE.Vector3();
+    //   vec.unproject(this.camera);
+    //   // calculate objects intersecting the picking ray
+    //   const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    //   if (intersects.length !== 0) {
+    //     const numberTexture = new THREE.CanvasTexture(
+    //       document.querySelector('#number')
+    //     );
+    //     const cubeGeometry = new THREE.BoxGeometry(500, 500, 500);
 
-        let mesh = new THREE.Mesh(
-          cubeGeometry,
-          new THREE.MeshPhongMaterial({
-            color: 0x156289,
-            emissive: 0x072534,
-            side: THREE.DoubleSide,
-            shading: THREE.FlatShading
-          })
-        );
-        const vector = new THREE.Vector3(this.mouse.x, this.mouse.y, -1).unproject(this.camera);
-        mesh.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
-        this.scene.add(mesh);
-        this.renderer.render(this.scene, this.camera);
-      }
-    });
+    //     let mesh = new THREE.Mesh(
+    //       cubeGeometry,
+    //       new THREE.MeshPhongMaterial({
+    //         color: 0x156289,
+    //         emissive: 0x072534,
+    //         side: THREE.DoubleSide,
+    //         shading: THREE.FlatShading
+    //       })
+    //     );
+    //     const vector = new THREE.Vector3(this.mouse.x, this.mouse.y, -1).unproject(this.camera);
+    //     mesh.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+    //     this.scene.add(mesh);
+    //     this.renderer.render(this.scene, this.camera);
+    //   }
+    // });
   }
 
   onWindowResize() {
